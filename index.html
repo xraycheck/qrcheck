@@ -120,13 +120,45 @@ function handle(f){
 }
 
 async function uploadPermanent(file){
-  const fd = new FormData();
-  fd.append('reqtype','fileupload');
-  fd.append('fileToUpload', file);
-  const res = await fetch('https://catbox.moe/user/api.php',{method:'POST', body:fd});
-  const txt = await res.text();
-  if(!txt.startsWith('http')) throw new Error('فشل الرفع: '+txt);
-  return txt.trim();
+  // 1) Try file.io (يدعم CORS من GitHub Pages)
+  try{
+    const fd = new FormData(); fd.append('file', file);
+    const res = await fetch('https://file.io',{method:'POST', body:fd});
+    const j = await res.json();
+    if(j && j.link) return j.link;
+  }catch(e){ console.log('file.io fail', e); }
+
+  // 2) Try 0x0.st (يدعم CORS ويعتبر شبه دائمي)
+  try{
+    const fd = new FormData(); fd.append('file', file);
+    const res = await fetch('https://0x0.st',{method:'POST', body:fd});
+    const txt = await res.text();
+    if(txt.trim().startsWith('http')) return txt.trim();
+  }catch(e){ console.log('0x0 fail', e); }
+
+  // 3) Try Catbox via CORS Proxy (للحفظ الدائمي الحقيقي)
+  try{
+    const fd = new FormData(); fd.append('reqtype','fileupload'); fd.append('fileToUpload', file);
+    const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://catbox.moe/user/api.php');
+    const res = await fetch(proxyUrl,{method:'POST', body:fd});
+    const txt = await res.text();
+    // proxy might return quoted
+    const clean = txt.trim().replace(/"/g,'');
+    if(clean.startsWith('http')) return clean;
+  }catch(e){ console.log('catbox proxy fail', e); }
+
+  // 4) Try tmpfiles via proxy
+  try{
+    const fd = new FormData(); fd.append('file', file);
+    const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://tmpfiles.org/api/v1/upload');
+    const res = await fetch(proxyUrl,{method:'POST', body:fd});
+    const j = await res.json();
+    if(j && j.data && j.data.url){
+      return j.data.url.replace('tmpfiles.org/','tmpfiles.org/dl/').replace('/dl/dl/','/dl/');
+    }
+  }catch(e){ console.log('tmpfiles proxy fail', e); }
+
+  throw new Error('فشل الرفع من GitHub - الحل: استخدم VPN او ضع رابط Google Drive في خانة الرابط المخصص');
 }
 
 async function embedQR(pdfFile, qrDataUrl, corner, size){
@@ -171,7 +203,7 @@ $('processBtn').onclick = async ()=>{
     $('status').textContent='⏳ توليد QR Code...';
     // Use the global QRCode correctly
     const qrLib = window.QRCode;
-    if(!qrLib) throw new Error('مكتبة QR لم تحمل - حدث الصفحة');
+    if(!qrLib) throw new Error('مكتبة QR لم تحمل - اعمل تحديث للصفحة Ctrl+F5');
     const qrDataUrl = await qrLib.toDataURL(linkToEncode,{width:600, margin:1, errorCorrectionLevel:'H'});
     
     $('qrImg').src=qrDataUrl; $('qrImg').classList.remove('hidden'); $('qrPlaceholder').classList.add('hidden');
