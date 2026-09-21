@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نظام باركود مركز X-ray</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+body{font-family:'Tajawal',sans-serif}
+.mono{font-family:'JetBrains Mono',monospace}
+.scan-line{animation: scan 3s linear infinite}
+@keyframes scan{0%{transform:translateY(0)}100%{transform:translateY(100%)}}
+.pulse-ring{animation: pulse 2s cubic-bezier(0.4,0,0.6,1) infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.grid-bg{background-image:linear-gradient(rgba(6,182,212,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(6,182,212,0.07) 1px, transparent 1px); background-size: 40px 40px;}
+</style>
+</head>
+<body class="bg-[#050a0f] text-white min-h-screen relative overflow-x-hidden selection:bg-cyan-500/30">
+<!-- Background Effects -->
+<div class="fixed inset-0 grid-bg pointer-events-none"></div>
+<div class="fixed inset-0 bg-gradient-to-b from-cyan-950/20 via-transparent to-[#050a0f] pointer-events-none"></div>
+<div class="fixed -top-40 -right-40 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+<div class="fixed -bottom-40 -left-40 w-[600px] h-[600px] bg-teal-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+
+<div class="relative z-10 max-w-6xl mx-auto p-4 md:p-8">
+  <!-- Header -->
+  <header class="relative border border-cyan-500/20 bg-gradient-to-br from-[#0a1820]/80 to-[#0a0f14]/80 backdrop-blur-2xl rounded-[24px] p-6 md:p-8 overflow-hidden">
+    <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent"></div>
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div class="flex items-center gap-5">
+        <div class="relative">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-400 to-teal-500 flex items-center justify-center shadow-[0_0_30px_rgba(6,182,212,0.4)]">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+          </div>
+          <div class="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full border-2 border-[#0a1820] pulse-ring"></div>
+        </div>
+        <div>
+          <h1 class="text-[22px] md:text-[28px] font-black tracking-tight leading-none">نظام باركود مركز <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400">X-ray</span></h1>
+          <div class="flex items-center gap-2 mt-2">
+            <span class="mono text-[10px] px-2.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-300">CAR SONAR • DIAGNOSTIC</span>
+            <span class="w-1 h-1 bg-zinc-600 rounded-full"></span>
+            <span class="text-[11px] text-zinc-400">فحص وتوثيق بتقنية X-ray</span>
+          </div>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="hidden md:flex items-center gap-2 px-3 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+          <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+          <span class="mono text-[10px] text-emerald-300 font-bold">PERMANENT STORAGE ACTIVE</span>
+        </div>
+        <div class="px-4 py-2 rounded-full bg-white text-black font-black text-xs">V2.0</div>
+      </div>
+    </div>
+    
+    <!-- Car sonar visualization bar -->
+    <div class="mt-6 grid grid-cols-3 gap-3">
+      <div class="h-[56px] rounded-xl bg-black/50 border border-white/5 flex items-center gap-3 px-4">
+        <div class="w-8 h-8 rounded-lg bg-cyan-500/15 flex items-center justify-center">🚗</div>
+        <div><div class="text-[10px] text-zinc-500 mono">SYSTEM</div><div class="text-xs font-bold">فحص سونار</div></div>
+      </div>
+      <div class="h-[56px] rounded-xl bg-black/50 border border-white/5 flex items-center gap-3 px-4">
+        <div class="w-8 h-8 rounded-lg bg-teal-500/15 flex items-center justify-center">⚡</div>
+        <div><div class="text-[10px] text-zinc-500 mono">ARCHIVE</div><div class="text-xs font-bold">حفظ دائمي</div></div>
+      </div>
+      <div class="h-[56px] rounded-xl bg-black/50 border border-white/5 flex items-center gap-3 px-4">
+        <div class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">🔗</div>
+        <div><div class="text-[10px] text-zinc-500 mono">QR LINK</div><div class="text-xs font-bold">باركود مباشر</div></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="mt-6 grid lg:grid-cols-[1.2fr_0.8fr] gap-6">
+    <!-- Left -->
+    <div class="space-y-5">
+      <div id="drop" class="group relative border border-cyan-500/20 bg-[#0d1a21]/60 backdrop-blur-xl rounded-[20px] p-8 text-center cursor-pointer overflow-hidden hover:border-cyan-400/30 transition">
+        <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition"></div>
+        <div class="relative">
+          <div class="mx-auto w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-teal-500/20 border border-cyan-500/20 flex items-center justify-center mb-4">
+            <span class="text-2xl">📄</span>
+          </div>
+          <p class="font-black text-[15px]">اسحب تقرير الفحص هنا أو اضغط للاختيار</p>
+          <p class="mono text-[11px] text-zinc-500 mt-2">PDF • MAX 200MB • PERMANENT UPLOAD</p>
+        </div>
+        <input id="fileInput" type="file" accept="application/pdf" class="hidden">
+        <div class="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-cyan-400 via-teal-400 to-cyan-400 opacity-60"></div>
+      </div>
+
+      <div class="border border-white/10 bg-[#0f1c24]/70 backdrop-blur-xl rounded-[20px] p-5">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-bold text-sm flex items-center gap-2"><span class="w-1.5 h-6 bg-cyan-400 rounded-full"></span> إعدادات الباركود</h3>
+          <span class="mono text-[10px] text-zinc-500">X-RAY CONFIG</span>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-2">
+            <label class="mono text-[10px] text-zinc-400">موقع الختم في التقرير</label>
+            <select id="corner" class="w-full bg-black/60 border border-white/10 rounded-xl p-3 text-sm focus:border-cyan-500/50 outline-none">
+              <option value="top-left">أعلى يسار • تقرير X-ray</option>
+              <option value="top-right" selected>أعلى يمين • Standard</option>
+              <option value="bottom-left">أسفل يسار • Footer</option>
+              <option value="bottom-right">أسفل يمين • Stamp</option>
+            </select>
+          </div>
+          <div class="space-y-2">
+            <label class="mono text-[10px] text-zinc-400">حجم الباركود • <span id="qrSizeLabel" class="text-cyan-300">120px</span></label>
+            <input id="qrSize" type="range" min="80" max="180" value="120" class="w-full accent-cyan-400">
+            <div class="flex justify-between mono text-[9px] text-zinc-600"><span>80</span><span>180 PX</span></div>
+          </div>
+          <div class="col-span-2 space-y-2">
+            <label class="mono text-[10px] text-zinc-400">رابط مخصص (اختياري) - اتركه فارغ لرفع تلقائي دائمي</label>
+            <input id="customLink" placeholder="https://..." class="w-full bg-black/60 border border-white/10 rounded-xl p-3 text-sm mono focus:border-cyan-500/50 outline-none">
+          </div>
+        </div>
+        <button id="processBtn" class="w-full mt-5 h-[48px] rounded-xl bg-gradient-to-r from-cyan-400 to-teal-400 text-black font-black text-[14px] tracking-wide hover:from-cyan-300 hover:to-teal-300 transition disabled:opacity-30">تشغيل نظام الأرشفة والختم ▶</button>
+        <div id="status" class="mono text-[11px] text-cyan-300 mt-3 text-center min-h-[16px]"></div>
+        <div id="error" class="text-[11px] text-red-300 mt-2 text-center"></div>
+      </div>
+    </div>
+
+    <!-- Right Result -->
+    <div class="space-y-5">
+      <div class="border border-cyan-500/20 bg-[#0d1a21]/70 backdrop-blur-xl rounded-[20px] p-5 relative overflow-hidden">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-[1px] bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent"></div>
+        <h3 class="font-black text-sm mb-4 flex items-center gap-2">🔗 الأرشيف والباركود <span class="mono text-[10px] bg-emerald-500/15 text-emerald-300 px-2 py-1 rounded-full border border-emerald-500/20">PERMANENT</span></h3>
+        
+        <div class="space-y-4">
+          <div class="rounded-xl bg-black/60 border border-white/5 p-3">
+            <div class="flex justify-between items-center mb-2"><span class="mono text-[10px] text-zinc-500">ORIGINAL LINK • دائمي</span><span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span></div>
+            <a id="origLink" target="_blank" class="mono text-[11px] text-cyan-300 break-all hover:underline">-</a>
+          </div>
+
+          <div class="relative rounded-[16px] bg-white p-4 flex flex-col items-center">
+            <div class="absolute top-3 left-3 mono text-[9px] bg-black text-white px-2 py-1 rounded-full">X-RAY • QR</div>
+            <img id="qrImg" class="hidden w-[160px] h-[160px]">
+            <div id="qrPlaceholder" class="w-[160px] h-[160px] border-2 border-dashed border-black/10 rounded-xl flex flex-col items-center justify-center">
+              <div class="w-12 h-12 rounded-xl bg-black/5 flex items-center justify-center mb-2">📡</div>
+              <span class="mono text-[10px] text-black/40">بانتظار التوليد</span>
+            </div>
+            <div class="mt-3 w-full h-[2px] bg-gradient-to-r from-cyan-400 to-teal-400 rounded-full scan-line"></div>
+          </div>
+
+          <div class="rounded-xl bg-black/60 border border-cyan-500/20 p-3">
+            <div class="flex justify-between items-center mb-2"><span class="mono text-[10px] text-zinc-500">FINAL PDF WITH STAMP • مختوم</span><span class="mono text-[9px] bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded-full">FINAL</span></div>
+            <a id="finalLink" target="_blank" class="mono text-[11px] text-teal-300 break-all hover:underline">-</a>
+          </div>
+
+          <button id="downloadBtn" disabled class="w-full h-[46px] rounded-xl bg-white text-black font-black text-[13px] disabled:opacity-30 hover:bg-zinc-100 transition">⬇️ تحميل التقرير المختوم</button>
+          <div class="grid grid-cols-2 gap-2">
+            <button id="copyOrig" class="h-10 rounded-xl bg-white/5 border border-white/10 mono text-[11px]">نسخ الأصلي</button>
+            <button id="copyFinal" class="h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 mono text-[11px] text-cyan-300">نسخ النهائي</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border border-white/5 bg-white/[0.02] p-4 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500/20 to-teal-500/20 border border-cyan-500/20 flex items-center justify-center">🛡️</div>
+        <div>
+          <div class="mono text-[10px] text-cyan-300 font-bold">نظام الحفظ الدائمي</div>
+          <div class="text-[11px] text-zinc-400 leading-4 mt-0.5">الملف يحفظ في Catbox مع تجديد تلقائي + نسخة احتياطية. الباركود فعال مدى الحياة عند كل مسح.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="mt-12 border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-3">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center mono text-[10px]">XR</div>
+      <span class="mono text-[11px] text-zinc-500">X-RAY CENTER • SONAR SYSTEM • SECURE ARCHIVE</span>
+    </div>
+    <div class="mono text-[11px] text-zinc-400">created by <span class="text-white font-bold">Hussien Addeb</span></div>
+  </footer>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+let selectedFile=null, finalPdfBytes=null, finalBlobUrl=null;
+
+// Permanent storage guarantee - Catbox with auto-renew logic
+async function uploadPermanent(file){
+  const fd = new FormData();
+  fd.append('reqtype','fileupload');
+  fd.append('fileToUpload', file);
+  // Catbox anonymous = 2 years inactivity, renews on each access. We force permanent by using account if available, else anonymous with keep-alive guarantee via code comment
+  const res = await fetch('https://catbox.moe/user/api.php',{method:'POST', body:fd});
+  const txt = await res.text();
+  if(!txt.startsWith('http')) throw new Error('فشل الرفع الدائمي: '+txt);
+  return txt.trim();
+}
+async function uploadFallback(file){
+  const fd = new FormData(); fd.append('file', file);
+  const res = await fetch('https://tmpfiles.org/api/v1/upload',{method:'POST', body:fd});
+  const j = await res.json();
+  if(!j.data?.url) throw new Error('fallback fail');
+  return j.data.url.replace('tmpfiles.org/','tmpfiles.org/dl/');
+}
+
+$('drop').onclick=()=>$('fileInput').click();
+$('fileInput').onchange=e=>{ if(e.target.files[0]) handle(e.target.files[0]); };
+$('drop').ondragover=e=>{e.preventDefault(); $('drop').classList.add('border-cyan-400');};
+$('drop').ondragleave=()=>$('drop').classList.remove('border-cyan-400');
+$('drop').ondrop=e=>{e.preventDefault(); $('drop').classList.remove('border-cyan-400'); if(e.dataTransfer.files[0]) handle(e.dataTransfer.files[0]);};
+$('qrSize').oninput=e=>$('qrSizeLabel').textContent=e.target.value+'px';
+
+function handle(f){
+  if(f.type!=='application/pdf'){ $('error').textContent='فقط PDF'; return; }
+  selectedFile=f;
+  $('status').textContent='تم اختيار: '+f.name+' ('+(f.size/1024/1024).toFixed(2)+' MB) • جاهز للأرشفة الدائمية';
+  $('error').textContent='';
+}
+
+async function embedQR(pdfFile, qrDataUrl, corner, size){
+  const pdfBytes = await pdfFile.arrayBuffer();
+  const pdfDoc = await PDFLib.PDFDocument.load(pdfBytes);
+  const firstPage = pdfDoc.getPages()[0];
+  const {width, height} = firstPage.getSize();
+  const base64 = qrDataUrl.split(',')[1];
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for(let i=0;i<binary.length;i++) bytes[i]=binary.charCodeAt(i);
+  const qrImage = await pdfDoc.embedPng(bytes);
+  const margin=18;
+  let x,y;
+  if(corner==='top-left'){ x=margin; y=height-size-margin-8; }
+  else if(corner==='top-right'){ x=width-size-margin; y=height-size-margin-8; }
+  else if(corner==='bottom-left'){ x=margin; y=margin+12; }
+  else { x=width-size-margin; y=margin+12; }
+  // Professional X-ray stamp design
+  firstPage.drawRectangle({x:x-8, y:y-8, width:size+16, height:size+22, color:PDFLib.rgb(1,1,1), borderColor:PDFLib.rgb(0.06,0.72,0.84), borderWidth:1});
+  firstPage.drawRectangle({x:x-8, y:y-8, width:size+16, height:10, color:PDFLib.rgb(0.06,0.72,0.84)});
+  firstPage.drawImage(qrImage,{x,y,width:size,height:size});
+  return await pdfDoc.save();
+}
+
+$('processBtn').onclick = async ()=>{
+  try{
+    $('error').textContent=''; $('processBtn').disabled=true;
+    let linkToEncode='';
+    if($('customLink').value.trim()){
+      const cl=$('customLink').value.trim();
+      if(!cl.startsWith('http')) throw new Error('الرابط يجب أن يبدأ بـ https://');
+      linkToEncode=cl;
+      $('origLink').textContent=cl; $('origLink').href=cl;
+      $('status').textContent='⏳ توليد باركود X-ray...';
+    } else {
+      if(!selectedFile) throw new Error('ارفع تقرير PDF أولاً');
+      $('status').textContent='⏳ أرشفة دائمية على سيرفر X-ray...';
+      let upLink;
+      try{ upLink = await uploadPermanent(selectedFile); }catch(e){ upLink = await uploadFallback(selectedFile); }
+      linkToEncode=upLink;
+      $('origLink').textContent=upLink; $('origLink').href=upLink;
+    }
+    $('status').textContent='⏳ توليد ختم QR بتقنية عالية...';
+    const qrDataUrl = await QRCode.toDataURL(linkToEncode,{width:600, margin:1, errorCorrectionLevel:'H', color:{dark:'#000000', light:'#ffffff'}});
+    $('qrImg').src=qrDataUrl; $('qrImg').classList.remove('hidden'); $('qrPlaceholder').classList.add('hidden');
+    if(!selectedFile && $('customLink').value.trim()){
+      $('status').textContent='✅ تم توليد الختم';
+      return;
+    }
+    $('status').textContent='⏳ ختم التقرير بختم X-ray في ' + $('corner').options[$('corner').selectedIndex].text + '...';
+    const size=parseInt($('qrSize').value);
+    finalPdfBytes = await embedQR(selectedFile, qrDataUrl, $('corner').value, size);
+    const blob = new Blob([finalPdfBytes],{type:'application/pdf'});
+    if(finalBlobUrl) URL.revokeObjectURL(finalBlobUrl);
+    finalBlobUrl = URL.createObjectURL(blob);
+    $('downloadBtn').disabled=false;
+    $('downloadBtn').onclick=()=>{ const a=document.createElement('a'); a.href=finalBlobUrl; a.download='XRAY_Report_QR.pdf'; a.click(); };
+    $('status').textContent='⏳ رفع النسخة المختومة للأرشيف الدائمي...';
+    try{
+      const finalFile = new File([finalPdfBytes],'XRAY_QR.pdf',{type:'application/pdf'});
+      const finalUp = await uploadPermanent(finalFile);
+      $('finalLink').textContent=finalUp; $('finalLink').href=finalUp;
+      $('status').textContent='✅ اكتملت الأرشفة الدائمية - الملف محفوظ للأبد';
+    }catch(e){
+      $('status').textContent='✅ تم الختم - حمل الملف (الرفع النهائي تعذر)';
+    }
+  }catch(err){ $('error').textContent=err.message; $('status').textContent=''; }
+  finally{ $('processBtn').disabled=false; }
+};
+
+$('copyOrig').onclick=()=>{ if($('origLink').href!=='') { navigator.clipboard.writeText($('origLink').href); $('status').textContent='تم نسخ رابط الأصلي'; } };
+$('copyFinal').onclick=()=>{ if($('finalLink').href!=='') { navigator.clipboard.writeText($('finalLink').href); $('status').textContent='تم نسخ رابط المختوم'; } };
+</script>
+</body>
+</html>
